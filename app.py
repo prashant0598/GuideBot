@@ -14,7 +14,16 @@ def verify():
         return request.args["hub.challenge"], 200
     return "Hello world", 200
 
+@app.route('/', methods=['POST'])
+def webhook():
+	data = request.get_json()
+	log(data)
 
+	return "ok", 200
+def log(message):
+	print(message)
+	sys.stdout.flush()
+	
 
 if __name__ == "__main__":
 	app.run(debug = True, port = 80)
