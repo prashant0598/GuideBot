@@ -1,14 +1,13 @@
 import os, sys
 from flask import Flask, request
-from utils import wit_response, get_news_elements
+from utils import wit_response
 from pymessenger import Bot
 
 app = Flask(__name__)
 
-PAGE_ACCESS_TOKEN = "fb_page_access_token_here"
+PAGE_ACCESS_TOKEN = "EAAEa7UKKc6YBAGgUjN9sEK5Y1PLqgt8sR6nhrkqS1JohiEJTUrNKaOWNbdGKDd2ZAmvKAGeI0Jma42cTFh5dnsmVDFUH2CS0q5PmvIM2ZCp7AwkrRa0TJxXQiA77CbVwsaSyQSrQtU8MeRjyq3ZBVe6iBa44crulptLBDXcsYS5TthtU8QZB"
 
 bot = Bot(PAGE_ACCESS_TOKEN)
-
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -18,7 +17,6 @@ def verify():
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
     return "Hello world", 200
-
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -40,17 +38,25 @@ def webhook():
 					else:
 						messaging_text = 'no text'
 
-					categories = wit_response(messaging_text)
-					elements = get_news_elements(categories)
-					bot.send_generic_message(sender_id, elements)
+					response = None
 
-	return "ok", 200
+					entity, value = wit_response(messaging_text)
 
+					if entity == 'newstype':
+						response = "ok. i will send u {} news".format(str(value))
+					elif entity =='location':
+						response = "ok so u live in {0}. i will send u news from {0} area".format(str(value))
+
+					if response == None:
+						response = "Sorry, i didn't understand" 		
+					bot.send_text_message(sender_id, response)
+
+	return "ok",200
 
 def log(message):
 	print(message)
 	sys.stdout.flush()
 
-
+	
 if __name__ == "__main__":
 	app.run(debug = True, port = 80)
