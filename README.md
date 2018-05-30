@@ -8,4 +8,5 @@
 This is a machine-learning based conversational dialog engine build in Python using Wit.ai. It now answers some basic queries.It is in development phase and in future it will become a multi-lingual Chatbot.
 ##  Dependencies
 Flask==0.12.2, wit==4.2.0, python 2.7
-
+## License
+   [MIT](https://prashant0598.mit-license.org)
